@@ -2,17 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const initDb = require('./src/config/initDb');
-
+const routes = require('./src/routes');
 const app = express();
+
 app.use(cors());
 app.use(express.json());
-
-// Rotas importadas
-const csvRoutes = require('./src/routes/csvRoutes');
-const escolasRoutes = require('./src/routes/escolasRoutes');
-
-app.use('/api/csv', csvRoutes);
-app.use('/api/escolas', escolasRoutes);
+app.use('/api', routes);
 
 app.get('/', (req, res) => {
   res.send('API funcionando 🚀');

@@ -54,9 +54,10 @@ async function initDb() {
     console.log('Tabelas criadas e usuário de teste inserido');
   } catch (error) {
     console.error('Erro ao criar tabela:', error);
-  } finally {
-    pool.end();
   }
+//   finally {
+//     pool.end();
+//   }
 }
 
 module.exports = initDb;
