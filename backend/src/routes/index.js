@@ -11,11 +11,8 @@ const csvRoutes = require('./csvRoutes');
 // Rotas públicas (não requerem autenticação)
 router.use('/auth', authRoutes);
 
-// Middleware de autenticação para rotas protegidas
-router.use(authMiddleware);
-
 // Rotas protegidas (requerem autenticação)
-router.use('/escolas', escolasRoutes);  // CRUD de escolas
-router.use('/csv', csvRoutes);          // Upload de arquivos CSV
+router.use('/escolas', authMiddleware, escolasRoutes);  // CRUD de escolas
+router.use('/csv', authMiddleware, csvRoutes);          // Upload de arquivos CSV
 
 module.exports = router;

@@ -32,4 +32,21 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const logout = async (req, res) => {
+  try {
+    // Log do logout para auditoria
+    console.log(`Usuário ${req.user.email} fez logout`);
+    
+    // Em uma implementação mais avançada, considerar:
+    // 1. Adicionar o token a uma blacklist
+    // 2. Registrar o logout no banco de dados
+    // 3. Invalidar o token no servidor
+    
+    res.json({ message: 'Logout realizado com sucesso' });
+  } catch (error) {
+    console.error('Erro no logout:', error);
+    res.status(500).json({ error: 'Erro no servidor', details: error.message });
+  }
+};
+
+module.exports = { login, logout };
