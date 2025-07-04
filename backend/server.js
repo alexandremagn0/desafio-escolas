@@ -5,6 +5,11 @@ const AppDataSource = require('./src/config/database');
 const routes = require('./src/routes');
 const app = express();
 
+// Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/config/swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(cors());
 app.use(express.json());
 app.use('/api', routes);
