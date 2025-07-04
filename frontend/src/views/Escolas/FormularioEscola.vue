@@ -139,7 +139,7 @@ const errors = reactive({})
 
 // Validation
 const validateForm = () => {
-  errors.value = {}
+  for (const key in errors) delete errors[key]
   
   if (!form.nome_escola.trim()) {
     errors.nome_escola = 'Nome da escola é obrigatório'
