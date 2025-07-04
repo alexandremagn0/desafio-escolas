@@ -3,6 +3,17 @@
 ## 💡 Descrição
 Aplicação fullstack com upload de CSV e CRUD de dados escolares, desenvolvida com Node.js + Express no backend, Vue.js 3 no frontend e PostgreSQL como banco de dados. O sistema permite gerenciar informações sobre instalações escolares através de uma interface web moderna com autenticação JWT.
 
+## 🌐 Aplicação Online
+
+### 🚀 Links de Produção
+- **Frontend**: [https://desafio-escolas.vercel.app](https://desafio-escolas.vercel.app)
+- **Backend**: [https://backend-escolas.onrender.com](https://backend-escolas.onrender.com)
+- **Documentação da API**: [https://backend-escolas.onrender.com/api-docs](https://backend-escolas.onrender.com/api-docs)
+
+### 🔐 Credenciais de Teste
+- **Email**: admin@teste.com
+- **Senha**: 123456
+
 ## 🚀 Tecnologias
 
 ### Backend
@@ -12,6 +23,8 @@ Aplicação fullstack com upload de CSV e CRUD de dados escolares, desenvolvida 
 - **Upload de Arquivos**: Multer
 - **Processamento CSV**: csv-parser
 - **Criptografia**: bcrypt
+- **Validação**: Zod
+- **Documentação**: Swagger/OpenAPI
 - **CORS**: Habilitado para integração frontend
 
 ### Frontend
@@ -30,7 +43,7 @@ Aplicação fullstack com upload de CSV e CRUD de dados escolares, desenvolvida 
 
 ### Clone o repositório
 ```bash
-git clone https://github.com/seuusuario/desafio-escolas.git
+git clone https://github.com/alexandremagn0/desafio-escolas.git
 cd desafio-escolas
 ```
 
@@ -110,9 +123,11 @@ O frontend estará disponível em `http://localhost:5173` (Vite padrão)
 - Upload de arquivos via interface
 - Navegação intuitiva
 
-## 🔐 Usuário de Teste
-- **Email**: admin@teste.com
-- **Senha**: 123456
+### 📚 Documentação da API
+- **Swagger/OpenAPI** integrado
+- Documentação interativa em `/api-docs`
+- Exemplos de requisição e resposta
+- Teste de endpoints direto na interface
 
 ## 📡 Endpoints da API
 
@@ -141,6 +156,11 @@ Content-Type: multipart/form-data
 Body: file (arquivo CSV)
 ```
 
+### Documentação
+```
+GET /api-docs               # Interface Swagger
+```
+
 ## 🗄️ Estrutura do Banco de Dados
 
 ### Tabela: instalacoes_escolares
@@ -151,11 +171,16 @@ Body: file (arquivo CSV)
 - `codigo_escola` (VARCHAR)
 - `total_salas_aula` (INTEGER)
 - `refeitorio` (BOOLEAN)
+- `criado_em` (TIMESTAMP)
 
 ### Tabela: users
 - `id` (SERIAL PRIMARY KEY)
 - `email` (VARCHAR UNIQUE)
 - `password` (VARCHAR - hash bcrypt)
+- `nome` (VARCHAR)
+- `sobrenome` (VARCHAR)
+- `data_nascimento` (DATE)
+- `documento` (VARCHAR UNIQUE)
 
 ## 📁 Estrutura do Projeto
 
@@ -163,10 +188,15 @@ Body: file (arquivo CSV)
 ```
 backend/
 ├── src/
-│   ├── config/          # Configurações (DB, etc.)
+│   ├── config/          # Configurações (DB, Swagger, etc.)
 │   ├── controllers/     # Controladores da aplicação
+│   ├── entities/        # Entidades do TypeORM
 │   ├── middleware/      # Middlewares customizados
+│   ├── migrations/      # Migrações do banco
+│   ├── repositories/    # Repositórios de dados
 │   ├── routes/          # Definição das rotas
+│   ├── schemas/         # Schemas de validação (Zod)
+│   ├── services/        # Lógica de negócio
 │   └── uploads/         # Arquivos temporários
 ├── server.js            # Arquivo principal
 ├── package.json
@@ -225,19 +255,15 @@ npm run preview # Visualiza build de produção
 
 ## 🚀 Deploy
 
-### Backend
-```bash
-cd backend
-npm run build
-npm start
-```
+### Backend (Render)
+- Conectado ao repositório GitHub
+- Deploy automático em push
+- Banco PostgreSQL gerenciado pelo Render
 
-### Frontend
-```bash
-cd frontend
-npm run build
-# Os arquivos gerados estarão em dist/
-```
+### Frontend (Vercel)
+- Conectado ao repositório GitHub
+- Deploy automático em push
+- Build otimizado com Vite
 
 ## 📄 Licença
 MIT
