@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const initDb = require('./src/config/initDb');
+const AppDataSource = require('./src/config/database');
 const routes = require('./src/routes');
 const app = express();
 
@@ -13,8 +13,8 @@ app.get('/', (req, res) => {
   res.send('API funcionando 🚀');
 });
 
-// Inicializa o banco e só depois sobe o servidor
-initDb()
+// Inicializa o TypeORM e só depois sobe o servidor
+AppDataSource.initialize()
   .then(() => {
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, '0.0.0.0', () => {
@@ -22,6 +22,6 @@ initDb()
     });
   })
   .catch(err => {
-    console.error('Erro ao inicializar banco:', err);
+    console.error('Erro ao inicializar TypeORM:', err);
     process.exit(1);
   });

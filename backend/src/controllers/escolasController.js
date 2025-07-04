@@ -1,9 +1,10 @@
-const pool = require('../config/db');
+const container = require('../config/container');
 
 const listarEscolas = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM instalacoes_escolares ORDER BY id ASC');
-    res.json(result.rows);
+    const escolaService = container.get('EscolaService');
+    const escolas = await escolaService.listarEscolas();
+    res.json(escolas);
   } catch (error) {
     console.error('Erro ao buscar escolas:', error);
     res.status(500).json({ error: 'Erro ao buscar escolas' });
@@ -13,27 +14,23 @@ const listarEscolas = async (req, res) => {
 const buscarEscola = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('SELECT * FROM instalacoes_escolares WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Escola não encontrada' });
-    }
-    res.json(result.rows[0]);
+    const escolaService = container.get('EscolaService');
+    const escola = await escolaService.buscarEscola(id);
+    res.json(escola);
   } catch (error) {
+    if (error.message === 'Escola não encontrada') {
+      return res.status(404).json({ error: error.message });
+    }
     console.error('Erro ao buscar escola:', error);
     res.status(500).json({ error: 'Erro ao buscar escola' });
   }
 };
 
 const criarEscola = async (req, res) => {
-  const { nome_escola, diretoria_ensino, municipio, codigo_escola, total_salas_aula, refeitorio } = req.body;
   try {
-    const result = await pool.query(
-      `INSERT INTO instalacoes_escolares
-       (nome_escola, diretoria_ensino, municipio, codigo_escola, total_salas_aula, refeitorio)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [nome_escola, diretoria_ensino, municipio, codigo_escola, total_salas_aula, refeitorio]
-    );
-    res.status(201).json(result.rows[0]);
+    const escolaService = container.get('EscolaService');
+    const escola = await escolaService.criarEscola(req.body);
+    res.status(201).json(escola);
   } catch (error) {
     console.error('Erro ao criar escola:', error);
     res.status(500).json({ error: 'Erro ao criar escola', details: error.message });
@@ -42,24 +39,14 @@ const criarEscola = async (req, res) => {
 
 const atualizarEscola = async (req, res) => {
   const { id } = req.params;
-  const { nome_escola, diretoria_ensino, municipio, codigo_escola, total_salas_aula, refeitorio } = req.body;
   try {
-    const result = await pool.query(
-      `UPDATE instalacoes_escolares SET
-        nome_escola = $1,
-        diretoria_ensino = $2,
-        municipio = $3,
-        codigo_escola = $4,
-        total_salas_aula = $5,
-        refeitorio = $6
-      WHERE id = $7 RETURNING *`,
-      [nome_escola, diretoria_ensino, municipio, codigo_escola, total_salas_aula, refeitorio, id]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Escola não encontrada para atualizar' });
-    }
-    res.json(result.rows[0]);
+    const escolaService = container.get('EscolaService');
+    const escola = await escolaService.atualizarEscola(id, req.body);
+    res.json(escola);
   } catch (error) {
+    if (error.message === 'Escola não encontrada para atualizar') {
+      return res.status(404).json({ error: error.message });
+    }
     console.error('Erro ao atualizar escola:', error);
     res.status(500).json({ error: 'Erro ao atualizar escola' });
   }
@@ -68,12 +55,13 @@ const atualizarEscola = async (req, res) => {
 const deletarEscola = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM instalacoes_escolares WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Escola não encontrada para deletar' });
-    }
+    const escolaService = container.get('EscolaService');
+    await escolaService.deletarEscola(id);
     res.json({ message: 'Escola deletada com sucesso' });
   } catch (error) {
+    if (error.message === 'Escola não encontrada para deletar') {
+      return res.status(404).json({ error: error.message });
+    }
     console.error('Erro ao deletar escola:', error);
     res.status(500).json({ error: 'Erro ao deletar escola' });
   }
