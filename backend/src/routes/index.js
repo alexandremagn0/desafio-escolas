@@ -4,7 +4,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth-middleware');
 
 const authRoutes = require('./auth-routes');
-const schoolRoutes = require('./school-routes');
+const schoolRoutes = require('./schools-routes');
 const csvRoutes = require('./csv-routes');
 
 router.use('/auth', authRoutes);
