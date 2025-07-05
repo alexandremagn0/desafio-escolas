@@ -1,36 +1,41 @@
-const AppDataSource = require('../config/database');
+const { AppDataSource } = require('../config/database');
 const IEscolaRepository = require('../interfaces/IEscolaRepository');
 
 class EscolaRepository extends IEscolaRepository {
-  async listar() {
-    const repo = AppDataSource.getRepository('InstalacaoEscolar');
+  async list() {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
     return await repo.find({ order: { id: 'ASC' } });
   }
 
-  async buscarPorId(id) {
-    const repo = AppDataSource.getRepository('InstalacaoEscolar');
+  async findById(id) {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
     return await repo.findOne({ where: { id } });
   }
 
-  async criar(escola) {
-    const repo = AppDataSource.getRepository('InstalacaoEscolar');
-    const newEscola = repo.create(escola);
-    return await repo.save(newEscola);
+  async findBySchoolCode(schoolCode) {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
+    return await repo.findOne({ where: { school_code: schoolCode } });
   }
 
-  async atualizar(id, escola) {
-    const repo = AppDataSource.getRepository('InstalacaoEscolar');
-    await repo.update(id, escola);
-    return await repo.findOne({ where: { id } });
+  async create(schoolData) {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
+    const school = repo.create(schoolData);
+    return await repo.save(school);
   }
 
-  async deletar(id) {
-    const repo = AppDataSource.getRepository('InstalacaoEscolar');
-    const escola = await repo.findOne({ where: { id } });
-    if (escola) {
-      await repo.remove(escola);
+  async update(id, schoolData) {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
+    await repo.update(id, schoolData);
+    return await this.findById(id);
+  }
+
+  async delete(id) {
+    const repo = AppDataSource.getRepository('SchoolInstallation');
+    const school = await repo.findOne({ where: { id } });
+    if (school) {
+      await repo.remove(school);
     }
-    return escola;
+    return school;
   }
 }
 

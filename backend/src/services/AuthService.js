@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 class AuthService {
   async login(email, password) {
-    const user = await userRepository.buscarPorEmail(email);
+    const user = await userRepository.findByEmail(email);
 
     if (!user) {
       throw new Error('Credenciais inválidas');
@@ -35,7 +35,7 @@ class AuthService {
     return { message: 'Logout realizado com sucesso' };
   }
 
-  async verificarToken(token) {
+  async verifyToken(token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return decoded;

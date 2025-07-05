@@ -1,32 +1,32 @@
 const AppDataSource = require('../config/database');
 
 class CsvRepository {
-  async inserirEmLote(dados) {
+  async insertBatch(data) {
     const queryRunner = AppDataSource.createQueryRunner();
     
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       
-      const repo = queryRunner.manager.getRepository('InstalacaoEscolar');
+      const repo = queryRunner.manager.getRepository('SchoolInstallation');
       const batchSize = 100;
-      for (let i = 0; i < dados.length; i += batchSize) {
-        const batch = dados.slice(i, i + batchSize);
+      for (let i = 0; i < data.length; i += batchSize) {
+        const batch = data.slice(i, i + batchSize);
         
-        const escolas = batch.map(row => ({
-          nome_escola: row['NOMESC'],
-          diretoria_ensino: row['DE'],
-          municipio: row['MUN'],
-          codigo_escola: row['CODESC'],
-          total_salas_aula: parseInt(row['TOT_SALAS_AULA']) || 0,
-          refeitorio: row['REFEITORIO'] === '1'
+        const schools = batch.map(row => ({
+          school_name: row['NOMESC'],
+          teaching_directorate: row['DE'],
+          municipality: row['MUN'],
+          school_code: row['CODESC'],
+          total_classrooms: parseInt(row['TOT_SALAS_AULA']) || 0,
+          cafeteria: row['REFEITORIO'] === '1'
         }));
         
-        await repo.save(escolas);
+        await repo.save(schools);
       }
       
       await queryRunner.commitTransaction();
-      return dados.length;
+      return data.length;
       
     } catch (error) {
       await queryRunner.rollbackTransaction();

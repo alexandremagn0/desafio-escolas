@@ -1,8 +1,8 @@
 const express = require('express');
-const { listarEscolas, buscarEscola, criarEscola, atualizarEscola, deletarEscola } = require('../controllers/escolasController');
+const { listSchools, findSchool, createSchool, updateSchool, deleteSchool } = require('../controllers/escolasController');
 const validateSchema = require('../middleware/validateSchema');
-const escolaSchema = require('../schemas/escolaSchema');
-const escolaUpdateSchema = require('../schemas/escolaUpdateSchema');
+const schoolSchema = require('../schemas/schoolSchema');
+const schoolUpdateSchema = require('../schemas/schoolUpdateSchema');
 const router = express.Router();
 
 /**
@@ -12,43 +12,43 @@ const router = express.Router();
  *     Escola:
  *       type: object
  *       required:
- *         - nome_escola
- *         - diretoria_ensino
- *         - municipio
- *         - codigo_escola
+ *         - school_name
+ *         - teaching_directorate
+ *         - municipality
+ *         - school_code
  *       properties:
  *         id:
  *           type: integer
  *           description: ID único da escola
- *         nome_escola:
+ *         school_name:
  *           type: string
  *           description: Nome da escola
- *         diretoria_ensino:
+ *         teaching_directorate:
  *           type: string
  *           description: Diretoria de ensino responsável
- *         municipio:
+ *         municipality:
  *           type: string
  *           description: Município onde a escola está localizada
- *         codigo_escola:
+ *         school_code:
  *           type: string
  *           description: Código único da escola
- *         total_salas_aula:
+ *         total_classrooms:
  *           type: integer
  *           description: Número total de salas de aula
- *         refeitorio:
+ *         cafeteria:
  *           type: boolean
  *           description: Se a escola possui refeitório
- *         criado_em:
+ *         created_at:
  *           type: string
  *           format: date-time
  *           description: Data de criação do registro
  *       example:
- *         nome_escola: "Escola Municipal João da Silva"
- *         diretoria_ensino: "Diretoria Regional de Ensino Centro"
- *         municipio: "São Paulo"
- *         codigo_escola: "123456"
- *         total_salas_aula: 15
- *         refeitorio: true
+ *         school_name: "Escola Municipal João da Silva"
+ *         teaching_directorate: "Diretoria Regional de Ensino Centro"
+ *         municipality: "São Paulo"
+ *         school_code: "123456"
+ *         total_classrooms: 15
+ *         cafeteria: true
  */
 
 /**
@@ -74,7 +74,7 @@ const router = express.Router();
  *       500:
  *         description: Erro interno do servidor
  */
-router.get('/', listarEscolas);
+router.get('/', listSchools);
 
 /**
  * @swagger
@@ -106,7 +106,7 @@ router.get('/', listarEscolas);
  *       500:
  *         description: Erro interno do servidor
  */
-router.get('/:id', buscarEscola);
+router.get('/:id', findSchool);
 
 /**
  * @swagger
@@ -124,36 +124,36 @@ router.get('/:id', buscarEscola);
  *           schema:
  *             type: object
  *             required:
- *               - nome_escola
- *               - diretoria_ensino
- *               - municipio
- *               - codigo_escola
+ *               - school_name
+ *               - teaching_directorate
+ *               - municipality
+ *               - school_code
  *             properties:
- *               nome_escola:
+ *               school_name:
  *                 type: string
  *                 description: Nome da escola
- *               diretoria_ensino:
+ *               teaching_directorate:
  *                 type: string
  *                 description: Diretoria de ensino responsável
- *               municipio:
+ *               municipality:
  *                 type: string
  *                 description: Município onde a escola está localizada
- *               codigo_escola:
+ *               school_code:
  *                 type: string
  *                 description: Código único da escola
- *               total_salas_aula:
+ *               total_classrooms:
  *                 type: integer
  *                 description: Número total de salas de aula
- *               refeitorio:
+ *               cafeteria:
  *                 type: boolean
  *                 description: Se a escola possui refeitório
  *           example:
- *             nome_escola: "Escola Municipal João da Silva"
- *             diretoria_ensino: "Diretoria Regional de Ensino Centro"
- *             municipio: "São Paulo"
- *             codigo_escola: "123456"
- *             total_salas_aula: 15
- *             refeitorio: true
+ *             school_name: "Escola Municipal João da Silva"
+ *             teaching_directorate: "Diretoria Regional de Ensino Centro"
+ *             municipality: "São Paulo"
+ *             school_code: "123456"
+ *             total_classrooms: 15
+ *             cafeteria: true
  *     responses:
  *       201:
  *         description: Escola criada com sucesso
@@ -168,7 +168,7 @@ router.get('/:id', buscarEscola);
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/', validateSchema(escolaSchema), criarEscola);
+router.post('/', validateSchema(schoolSchema), createSchool);
 
 /**
  * @swagger
@@ -193,28 +193,28 @@ router.post('/', validateSchema(escolaSchema), criarEscola);
  *           schema:
  *             type: object
  *             properties:
- *               nome_escola:
+ *               school_name:
  *                 type: string
  *                 description: Nome da escola
- *               diretoria_ensino:
+ *               teaching_directorate:
  *                 type: string
  *                 description: Diretoria de ensino responsável
- *               municipio:
+ *               municipality:
  *                 type: string
  *                 description: Município onde a escola está localizada
- *               codigo_escola:
+ *               school_code:
  *                 type: string
  *                 description: Código único da escola
- *               total_salas_aula:
+ *               total_classrooms:
  *                 type: integer
  *                 description: Número total de salas de aula
- *               refeitorio:
+ *               cafeteria:
  *                 type: boolean
  *                 description: Se a escola possui refeitório
  *           example:
- *             nome_escola: "Escola Municipal João da Silva Atualizada"
- *             total_salas_aula: 20
- *             refeitorio: false
+ *             school_name: "Escola Municipal João da Silva Atualizada"
+ *             total_classrooms: 20
+ *             cafeteria: false
  *     responses:
  *       200:
  *         description: Escola atualizada com sucesso
@@ -231,7 +231,7 @@ router.post('/', validateSchema(escolaSchema), criarEscola);
  *       500:
  *         description: Erro interno do servidor
  */
-router.put('/:id', validateSchema(escolaUpdateSchema), atualizarEscola);
+router.put('/:id', validateSchema(schoolUpdateSchema), updateSchool);
 
 /**
  * @swagger
@@ -267,6 +267,6 @@ router.put('/:id', validateSchema(escolaUpdateSchema), atualizarEscola);
  *       500:
  *         description: Erro interno do servidor
  */
-router.delete('/:id', deletarEscola);
+router.delete('/:id', deleteSchool);
 
 module.exports = router;

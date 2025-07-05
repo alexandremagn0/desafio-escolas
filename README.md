@@ -163,15 +163,15 @@ GET /api-docs               # Interface Swagger
 
 ## 🗄️ Estrutura do Banco de Dados
 
-### Tabela: instalacoes_escolares
+### Tabela: school_installations
 - `id` (SERIAL PRIMARY KEY)
-- `nome_escola` (VARCHAR)
-- `diretoria_ensino` (VARCHAR)
-- `municipio` (VARCHAR)
-- `codigo_escola` (VARCHAR)
-- `total_salas_aula` (INTEGER)
-- `refeitorio` (BOOLEAN)
-- `criado_em` (TIMESTAMP)
+- `school_name` (TEXT)
+- `teaching_directorate` (TEXT)
+- `municipality` (TEXT)
+- `school_code` (TEXT)
+- `total_classrooms` (INTEGER)
+- `cafeteria` (BOOLEAN)
+- `created_at` (TIMESTAMP)
 
 ### Tabela: users
 - `id` (SERIAL PRIMARY KEY)

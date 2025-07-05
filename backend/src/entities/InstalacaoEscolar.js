@@ -1,35 +1,35 @@
 const { EntitySchema } = require('typeorm');
 
 module.exports = new EntitySchema({
-  name: 'InstalacaoEscolar',
-  tableName: 'instalacoes_escolares',
+  name: 'SchoolInstallation',
+  tableName: 'school_installations',
   columns: {
     id: {
       primary: true,
       type: 'int',
       generated: true,
     },
-    nome_escola: {
+    school_name: {
       type: 'text',
     },
-    diretoria_ensino: {
+    teaching_directorate: {
       type: 'text',
     },
-    municipio: {
+    municipality: {
       type: 'text',
     },
-    codigo_escola: {
+    school_code: {
       type: 'text',
     },
-    total_salas_aula: {
+    total_classrooms: {
       type: 'int',
       nullable: true,
     },
-    refeitorio: {
+    cafeteria: {
       type: 'boolean',
       nullable: true,
     },
-    criado_em: {
+    created_at: {
       type: 'timestamp',
       createDate: true,
       default: () => 'CURRENT_TIMESTAMP',

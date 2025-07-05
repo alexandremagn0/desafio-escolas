@@ -1,22 +1,22 @@
 class IEscolaRepository {
-  async listar() {
-    throw new Error('Método listar deve ser implementado');
+  async list() {
+    throw new Error('Método list deve ser implementado');
   }
 
-  async buscarPorId(id) {
-    throw new Error('Método buscarPorId deve ser implementado');
+  async findById(id) {
+    throw new Error('Método findById deve ser implementado');
   }
 
-  async criar(escola) {
-    throw new Error('Método criar deve ser implementado');
+  async create(school) {
+    throw new Error('Método create deve ser implementado');
   }
 
-  async atualizar(id, escola) {
-    throw new Error('Método atualizar deve ser implementado');
+  async update(id, school) {
+    throw new Error('Método update deve ser implementado');
   }
 
-  async deletar(id) {
-    throw new Error('Método deletar deve ser implementado');
+  async delete(id) {
+    throw new Error('Método delete deve ser implementado');
   }
 }
 

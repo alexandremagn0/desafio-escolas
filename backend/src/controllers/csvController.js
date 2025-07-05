@@ -2,20 +2,20 @@ const csvService = require('../services/CsvService');
 
 const uploadCsv = async (req, res) => {
   try {
-    await csvService.validarArquivo(req.file);
+    await csvService.validateFile(req.file);
 
-    const resultado = await csvService.processarCsv(req.file.path);
+    const result = await csvService.processCsv(req.file.path);
 
-    await csvService.limparArquivoTemporario(req.file.path);
+    await csvService.cleanTemporaryFile(req.file.path);
 
     res.json({ 
       message: 'CSV importado com sucesso!', 
-      total: resultado.total 
+      total: result.total 
     });
 
   } catch (error) {
     if (req.file) {
-      await csvService.limparArquivoTemporario(req.file.path);
+      await csvService.cleanTemporaryFile(req.file.path);
     }
 
     console.error('Erro ao importar CSV:', error);

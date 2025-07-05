@@ -2,36 +2,36 @@ class EscolaService {
   constructor(escolaRepository) {
     this.escolaRepository = escolaRepository;
   }
-  async listarEscolas() {
-    return await this.escolaRepository.listar();
+  async listSchools() {
+    return await this.escolaRepository.list();
   }
 
-  async buscarEscola(id) {
-    const escola = await this.escolaRepository.buscarPorId(id);
-    if (!escola) {
+  async findSchool(id) {
+    const school = await this.escolaRepository.findById(id);
+    if (!school) {
       throw new Error('Escola não encontrada');
     }
-    return escola;
+    return school;
   }
 
-  async criarEscola(dados) {
-    return await this.escolaRepository.criar(dados);
+  async createSchool(data) {
+    return await this.escolaRepository.create(data);
   }
 
-  async atualizarEscola(id, dados) {
-    const escola = await this.escolaRepository.atualizar(id, dados);
-    if (!escola) {
+  async updateSchool(id, data) {
+    const school = await this.escolaRepository.update(id, data);
+    if (!school) {
       throw new Error('Escola não encontrada para atualizar');
     }
-    return escola;
+    return school;
   }
 
-  async deletarEscola(id) {
-    const escola = await this.escolaRepository.deletar(id);
-    if (!escola) {
+  async deleteSchool(id) {
+    const school = await this.escolaRepository.delete(id);
+    if (!school) {
       throw new Error('Escola não encontrada para deletar');
     }
-    return escola;
+    return school;
   }
 }
 

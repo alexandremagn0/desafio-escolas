@@ -1,22 +1,22 @@
 const container = require('../config/container');
 
-const listarEscolas = async (req, res) => {
+const listSchools = async (req, res) => {
   try {
     const escolaService = container.get('EscolaService');
-    const escolas = await escolaService.listarEscolas();
-    res.json(escolas);
+    const schools = await escolaService.listSchools();
+    res.json(schools);
   } catch (error) {
     console.error('Erro ao buscar escolas:', error);
     res.status(500).json({ error: 'Erro ao buscar escolas' });
   }
 };
 
-const buscarEscola = async (req, res) => {
+const findSchool = async (req, res) => {
   const { id } = req.params;
   try {
     const escolaService = container.get('EscolaService');
-    const escola = await escolaService.buscarEscola(id);
-    res.json(escola);
+    const school = await escolaService.findSchool(id);
+    res.json(school);
   } catch (error) {
     if (error.message === 'Escola não encontrada') {
       return res.status(404).json({ error: error.message });
@@ -26,23 +26,23 @@ const buscarEscola = async (req, res) => {
   }
 };
 
-const criarEscola = async (req, res) => {
+const createSchool = async (req, res) => {
   try {
     const escolaService = container.get('EscolaService');
-    const escola = await escolaService.criarEscola(req.body);
-    res.status(201).json(escola);
+    const school = await escolaService.createSchool(req.body);
+    res.status(201).json(school);
   } catch (error) {
     console.error('Erro ao criar escola:', error);
     res.status(500).json({ error: 'Erro ao criar escola', details: error.message });
   }
 };
 
-const atualizarEscola = async (req, res) => {
+const updateSchool = async (req, res) => {
   const { id } = req.params;
   try {
     const escolaService = container.get('EscolaService');
-    const escola = await escolaService.atualizarEscola(id, req.body);
-    res.json(escola);
+    const school = await escolaService.updateSchool(id, req.body);
+    res.json(school);
   } catch (error) {
     if (error.message === 'Escola não encontrada para atualizar') {
       return res.status(404).json({ error: error.message });
@@ -52,11 +52,11 @@ const atualizarEscola = async (req, res) => {
   }
 };
 
-const deletarEscola = async (req, res) => {
+const deleteSchool = async (req, res) => {
   const { id } = req.params;
   try {
     const escolaService = container.get('EscolaService');
-    await escolaService.deletarEscola(id);
+    await escolaService.deleteSchool(id);
     res.json({ message: 'Escola deletada com sucesso' });
   } catch (error) {
     if (error.message === 'Escola não encontrada para deletar') {
@@ -68,9 +68,9 @@ const deletarEscola = async (req, res) => {
 };
 
 module.exports = {
-  listarEscolas,
-  buscarEscola,
-  criarEscola,
-  atualizarEscola,
-  deletarEscola
+  listSchools,
+  findSchool,
+  createSchool,
+  updateSchool,
+  deleteSchool
 };
