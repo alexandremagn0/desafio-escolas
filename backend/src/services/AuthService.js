@@ -25,12 +25,11 @@ class AuthService {
   }
 
   async logout(user) {
-    // Log do logout para auditoria
     console.log(`Usuário ${user.email} fez logout`);
     
-    // Em uma implementação mais avançada, considerar:
-    // 1. Adicionar o token a uma blacklist
-    // 2. Registrar o logout no banco de dados
+    // Em uma implementação futura:
+    // 1. Adicionar o token a uma blacklist ou
+    // 2. Registrar o logout no banco de dados ou
     // 3. Invalidar o token no servidor
     
     return { message: 'Logout realizado com sucesso' };

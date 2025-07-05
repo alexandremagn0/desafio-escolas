@@ -9,8 +9,6 @@ class CsvRepository {
       await queryRunner.startTransaction();
       
       const repo = queryRunner.manager.getRepository('InstalacaoEscolar');
-      
-      // Processar em lotes de 100 registros
       const batchSize = 100;
       for (let i = 0; i < dados.length; i += batchSize) {
         const batch = dados.slice(i, i + batchSize);

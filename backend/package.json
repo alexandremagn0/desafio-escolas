@@ -1,16 +1,16 @@
 {
-  "name": "backend",
+  "name": "backend-escolas",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend da API de gerenciamento de escolas - Desafio técnico",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["escolas", "api", "nodejs", "express", "postgresql"],
+  "author": "Alexandre Magno",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",

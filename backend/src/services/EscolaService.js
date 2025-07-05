@@ -15,7 +15,6 @@ class EscolaService {
   }
 
   async criarEscola(dados) {
-    // Aqui você pode adicionar validações de negócio
     return await this.escolaRepository.criar(dados);
   }
 

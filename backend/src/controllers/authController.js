@@ -1,4 +1,3 @@
-// src/controllers/authController.js
 const authService = require('../services/AuthService');
 
 const login = async (req, res) => {

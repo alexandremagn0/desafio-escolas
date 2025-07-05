@@ -5,7 +5,6 @@ const AppDataSource = require('./src/config/database');
 const routes = require('./src/routes');
 const app = express();
 
-// Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./src/config/swagger');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -15,10 +14,9 @@ app.use(express.json());
 app.use('/api', routes);
 
 app.get('/', (req, res) => {
-  res.send('API funcionando 🚀');
+  res.send('API funcionando');
 });
 
-// Inicializa o TypeORM e só depois sobe o servidor
 AppDataSource.initialize()
   .then(() => {
     const PORT = process.env.PORT || 3001;

@@ -1,4 +1,3 @@
-// Interface que define o contrato do repositório
 class IEscolaRepository {
   async listar() {
     throw new Error('Método listar deve ser implementado');

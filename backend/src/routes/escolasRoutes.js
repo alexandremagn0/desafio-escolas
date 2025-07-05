@@ -1,4 +1,3 @@
-// escolasRoutes.js
 const express = require('express');
 const { listarEscolas, buscarEscola, criarEscola, atualizarEscola, deletarEscola } = require('../controllers/escolasController');
 const validateSchema = require('../middleware/validateSchema');

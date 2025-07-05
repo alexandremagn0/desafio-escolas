@@ -2,13 +2,10 @@ const csvService = require('../services/CsvService');
 
 const uploadCsv = async (req, res) => {
   try {
-    // Validar arquivo
     await csvService.validarArquivo(req.file);
 
-    // Processar CSV
     const resultado = await csvService.processarCsv(req.file.path);
 
-    // Limpar arquivo temporário
     await csvService.limparArquivoTemporario(req.file.path);
 
     res.json({ 
@@ -17,7 +14,6 @@ const uploadCsv = async (req, res) => {
     });
 
   } catch (error) {
-    // Limpar arquivo temporário em caso de erro
     if (req.file) {
       await csvService.limparArquivoTemporario(req.file.path);
     }

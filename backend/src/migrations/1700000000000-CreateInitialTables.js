@@ -4,7 +4,6 @@ module.exports = class CreateInitialTables1700000000000 {
     name = 'CreateInitialTables1700000000000'
 
     async up(queryRunner) {
-        // Criar tabela de usuários
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "users" (
                 "id" SERIAL NOT NULL,
@@ -20,7 +19,6 @@ module.exports = class CreateInitialTables1700000000000 {
             )
         `);
 
-        // Criar tabela de instalações escolares
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "instalacoes_escolares" (
                 "id" SERIAL NOT NULL,
@@ -37,7 +35,6 @@ module.exports = class CreateInitialTables1700000000000 {
     }
 
     async down(queryRunner) {
-        // Rollback: remover as tabelas na ordem inversa
         await queryRunner.query(`DROP TABLE "instalacoes_escolares"`);
         await queryRunner.query(`DROP TABLE "users"`);
     }
