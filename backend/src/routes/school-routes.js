@@ -1,8 +1,8 @@
 const express = require('express');
-const { listSchools, findSchool, createSchool, updateSchool, deleteSchool } = require('../controllers/escolasController');
-const validateSchema = require('../middleware/validateSchema');
-const schoolSchema = require('../schemas/schoolSchema');
-const schoolUpdateSchema = require('../schemas/schoolUpdateSchema');
+const { listSchools, getSchoolById, createSchool, updateSchool, deleteSchool } = require('../controllers/school-controller');
+const validateSchema = require('../middleware/validate-schema');
+const schoolSchema = require('../schemas/school-schema');
+const schoolUpdateSchema = require('../schemas/school-update-schema');
 const router = express.Router();
 
 /**
@@ -53,7 +53,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/escolas:
+ * /api/schools:
  *   get:
  *     summary: Lista todas as escolas
  *     description: Retorna uma lista de todas as escolas cadastradas no sistema
@@ -78,7 +78,7 @@ router.get('/', listSchools);
 
 /**
  * @swagger
- * /api/escolas/{id}:
+ * /api/schools/{id}:
  *   get:
  *     summary: Busca uma escola específica
  *     description: Retorna os dados de uma escola pelo seu ID
@@ -106,11 +106,11 @@ router.get('/', listSchools);
  *       500:
  *         description: Erro interno do servidor
  */
-router.get('/:id', findSchool);
+router.get('/:id', getSchoolById);
 
 /**
  * @swagger
- * /api/escolas:
+ * /api/schools:
  *   post:
  *     summary: Cria uma nova escola
  *     description: Cadastra uma nova escola no sistema
@@ -172,7 +172,7 @@ router.post('/', validateSchema(schoolSchema), createSchool);
 
 /**
  * @swagger
- * /api/escolas/{id}:
+ * /api/schools/{id}:
  *   put:
  *     summary: Atualiza uma escola
  *     description: Atualiza os dados de uma escola existente
@@ -235,7 +235,7 @@ router.put('/:id', validateSchema(schoolUpdateSchema), updateSchool);
 
 /**
  * @swagger
- * /api/escolas/{id}:
+ * /api/schools/{id}:
  *   delete:
  *     summary: Remove uma escola
  *     description: Remove uma escola do sistema pelo seu ID

@@ -109,13 +109,13 @@ const stats = ref({
 // Methods
 const loadStats = async () => {
   try {
-    const response = await api.get('/escolas')
+    const response = await api.get('/schools')
     const escolas = response.data
     
-    const municipios = new Set(escolas.map(e => e.municipio))
-    const comRefeitorio = escolas.filter(e => e.refeitorio).length
+    const municipios = new Set(escolas.map(e => e.municipality))
+    const comRefeitorio = escolas.filter(e => e.cafeteria).length
     const mediaSalas = escolas.length > 0 
-      ? Math.round(escolas.reduce((sum, e) => sum + e.total_salas_aula, 0) / escolas.length)
+      ? Math.round(escolas.reduce((sum, e) => sum + e.total_classrooms, 0) / escolas.length)
       : 0
 
     stats.value = {

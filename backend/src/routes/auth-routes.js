@@ -1,9 +1,8 @@
 const express = require('express');
+const AuthController = require('../controllers/auth-controller');
 const router = express.Router();
-const { login, logout } = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware');
-const validateSchema = require('../middleware/validateSchema');
-const loginSchema = require('../schemas/loginSchema');
+
+const authController = new AuthController();
 
 /**
  * @swagger
@@ -71,30 +70,80 @@ const loginSchema = require('../schemas/loginSchema');
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Realiza login do usuário
- *     description: Autentica o usuário e retorna um token JWT
- *     tags: [Autenticação]
+ *     summary: Login do usuário
+ *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Login realizado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LoginResponse'
- *       400:
- *         description: Dados inválidos
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
  *       401:
  *         description: Credenciais inválidas
- *       500:
- *         description: Erro interno do servidor
+ *       400:
+ *         description: Dados inválidos
  */
-router.post('/login', validateSchema(loginSchema), login);
+router.post('/login', authController.login.bind(authController));
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registro de novo usuário
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuário criado com sucesso
+ *       400:
+ *         description: Dados inválidos ou email já cadastrado
+ */
+router.post('/register', authController.register.bind(authController));
 
 /**
  * @swagger
@@ -102,21 +151,15 @@ router.post('/login', validateSchema(loginSchema), login);
  *   post:
  *     summary: Realiza logout do usuário
  *     description: Invalida a sessão do usuário
- *     tags: [Autenticação]
+ *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Logout realizado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/LogoutResponse'
  *       401:
  *         description: Não autorizado - Token inválido ou não fornecido
- *       500:
- *         description: Erro interno do servidor
  */
-router.post('/logout', authMiddleware, logout);
+router.post('/logout', authController.logout.bind(authController));
 
 module.exports = router;

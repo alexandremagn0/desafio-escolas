@@ -18,18 +18,18 @@ module.exports = new EntitySchema({
       type: 'varchar',
       length: 255,
     },
-    nome: {
+    first_name: {
       type: 'varchar',
       length: 100,
     },
-    sobrenome: {
+    last_name: {
       type: 'varchar',
       length: 100,
     },
-    data_nascimento: {
+    birth_date: {
       type: 'date',
     },
-    documento: {
+    document: {
       type: 'varchar',
       length: 50,
       unique: true,

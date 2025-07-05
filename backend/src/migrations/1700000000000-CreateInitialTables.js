@@ -9,12 +9,12 @@ module.exports = class CreateInitialTables1700000000000 {
                 "id" SERIAL NOT NULL,
                 "email" character varying(255) NOT NULL,
                 "password" character varying(255) NOT NULL,
-                "nome" character varying(100) NOT NULL,
-                "sobrenome" character varying(100) NOT NULL,
-                "data_nascimento" date NOT NULL,
-                "documento" character varying(50) NOT NULL,
+                "first_name" character varying(100) NOT NULL,
+                "last_name" character varying(100) NOT NULL,
+                "birth_date" date NOT NULL,
+                "document" character varying(50) NOT NULL,
                 CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"),
-                CONSTRAINT "UQ_9e6b2b8b8b8b8b8b8b8b8b8b" UNIQUE ("documento"),
+                CONSTRAINT "UQ_9e6b2b8b8b8b8b8b8b8b8b8b" UNIQUE ("document"),
                 CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )
         `);

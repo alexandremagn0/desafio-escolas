@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleware/auth-middleware');
 
-const authRoutes = require('./authRoutes');
-const escolasRoutes = require('./escolasRoutes');
-const csvRoutes = require('./csvRoutes');
+const authRoutes = require('./auth-routes');
+const schoolRoutes = require('./school-routes');
+const csvRoutes = require('./csv-routes');
 
 router.use('/auth', authRoutes);
-
-router.use('/escolas', authMiddleware, escolasRoutes);
+router.use('/schools', authMiddleware, schoolRoutes);
 router.use('/csv', authMiddleware, csvRoutes);
 
 module.exports = router;

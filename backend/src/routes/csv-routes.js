@@ -1,9 +1,8 @@
 const express = require('express');
-const multer = require('multer');
-const { uploadCsv } = require('../controllers/csvController');
+const CsvController = require('../controllers/csv-controller');
 const router = express.Router();
 
-const upload = multer({ dest: 'src/uploads/' });
+const csvController = new CsvController();
 
 /**
  * @swagger
@@ -80,6 +79,7 @@ const upload = multer({ dest: 'src/uploads/' });
  *             schema:
  *               $ref: '#/components/schemas/CsvErrorResponse'
  */
-router.post('/upload', upload.single('file'), uploadCsv);
+router.post('/upload', csvController.upload.single('file'), csvController.uploadCsv.bind(csvController));
+router.get('/count', csvController.getSchoolsCount.bind(csvController));
 
 module.exports = router;

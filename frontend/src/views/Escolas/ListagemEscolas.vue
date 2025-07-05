@@ -60,7 +60,7 @@
               class="school-card"
             >
               <div class="school-header">
-                <h3>{{ school.nome_escola }}</h3>
+                <h3>{{ school.school_name }}</h3>
                 <div class="school-actions">
                   <button @click="editSchool(school)" class="icon-button edit">
                     <span>✏️</span>
@@ -73,25 +73,25 @@
               <div class="school-details">
                 <div class="detail-row">
                   <span class="detail-label">Código:</span>
-                  <span class="detail-value">{{ school.codigo_escola }}</span>
+                  <span class="detail-value">{{ school.school_code }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Município:</span>
-                  <span class="detail-value">{{ school.municipio }}</span>
+                  <span class="detail-value">{{ school.municipality }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Diretoria:</span>
-                  <span class="detail-value">{{ school.diretoria_ensino }}</span>
+                  <span class="detail-value">{{ school.teaching_directorate }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Salas de Aula:</span>
-                  <span class="detail-value">{{ school.total_salas_aula }}</span>
+                  <span class="detail-value">{{ school.total_classrooms }}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Refeitório:</span>
                   <span class="detail-value">
-                    <span :class="school.refeitorio ? 'status-yes' : 'status-no'">
-                      {{ school.refeitorio ? 'Sim' : 'Não' }}
+                    <span :class="school.cafeteria ? 'status-yes' : 'status-no'">
+                      {{ school.cafeteria ? 'Sim' : 'Não' }}
                     </span>
                   </span>
                 </div>
@@ -146,27 +146,27 @@
         <form @submit.prevent="updateSchool" class="modal-form">
           <div class="form-group">
             <label>Nome da Escola</label>
-            <input v-model="editingSchool.nome_escola" type="text" required />
+            <input v-model="editingSchool.school_name" type="text" required />
           </div>
           <div class="form-group">
             <label>Código da Escola</label>
-            <input v-model="editingSchool.codigo_escola" type="text" required />
+            <input v-model="editingSchool.school_code" type="text" required />
           </div>
           <div class="form-group">
             <label>Município</label>
-            <input v-model="editingSchool.municipio" type="text" required />
+            <input v-model="editingSchool.municipality" type="text" required />
           </div>
           <div class="form-group">
             <label>Diretoria de Ensino</label>
-            <input v-model="editingSchool.diretoria_ensino" type="text" required />
+            <input v-model="editingSchool.teaching_directorate" type="text" required />
           </div>
           <div class="form-group">
             <label>Total de Salas de Aula</label>
-            <input v-model="editingSchool.total_salas_aula" type="number" required />
+            <input v-model="editingSchool.total_classrooms" type="number" required />
           </div>
           <div class="form-group">
             <label>
-              <input v-model="editingSchool.refeitorio" type="checkbox" />
+              <input v-model="editingSchool.cafeteria" type="checkbox" />
               Possui Refeitório
             </label>
           </div>
@@ -212,9 +212,9 @@ const stats = ref({
 const filteredSchools = computed(() => {
   if (!searchTerm.value) return schools.value
   return schools.value.filter(school => 
-    school.nome_escola.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-    school.municipio.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-    school.codigo_escola.toLowerCase().includes(searchTerm.value.toLowerCase())
+    school.school_name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+    school.municipality.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+    school.school_code.toLowerCase().includes(searchTerm.value.toLowerCase())
   )
 })
 
@@ -260,7 +260,7 @@ watch(searchTerm, () => {
 const loadSchools = async () => {
   try {
     loading.value = true
-    const response = await api.get('/escolas')
+    const response = await api.get('/schools')
     schools.value = response.data
     calculateStats()
   } catch (error) {
@@ -271,7 +271,7 @@ const loadSchools = async () => {
 }
 
 const calculateStats = () => {
-  const municipios = new Set(schools.value.map(e => e.municipio))
+  const municipios = new Set(schools.value.map(e => e.municipality))
   stats.value = {
     totalMunicipios: municipios.size
   }
@@ -284,7 +284,7 @@ const editSchool = (school) => {
 
 const updateSchool = async () => {
   try {
-    await api.put(`/escolas/${editingSchool.value.id}`, editingSchool.value)
+    await api.put(`/schools/${editingSchool.value.id}`, editingSchool.value)
     await loadSchools()
     showEditModal.value = false
     alert('Escola atualizada com sucesso!')
@@ -298,7 +298,7 @@ const deleteSchool = async (id) => {
   if (!confirm('Tem certeza que deseja deletar esta escola?')) return
 
   try {
-    await api.delete(`/escolas/${id}`)
+    await api.delete(`/schools/${id}`)
     await loadSchools()
     alert('Escola deletada com sucesso!')
   } catch (error) {

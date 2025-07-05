@@ -8,7 +8,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize:process.env.NODE_ENV === 'production' ? false : true,
+  synchronize: true,
   logging: true,
   entities: [__dirname + '/../entities/*.js'],
   migrations: [__dirname + '/../migrations/*.js'],
@@ -18,4 +18,12 @@ const AppDataSource = new DataSource({
   } : false
 });
 
-module.exports = AppDataSource; 
+// Função para obter repositório de forma segura
+const getRepository = (entityName) => {
+  if (!AppDataSource.isInitialized) {
+    throw new Error('DataSource não foi inicializado. Aguarde a inicialização do servidor.');
+  }
+  return AppDataSource.getRepository(entityName);
+};
+
+module.exports = { AppDataSource, getRepository }; 

@@ -6,7 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed": "node src/seeds/create-admin-user.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/database.js",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/database.js",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/database.js"
   },
   "keywords": ["escolas", "api", "nodejs", "express", "postgresql"],
   "author": "Alexandre Magno",
@@ -17,7 +22,7 @@
     "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
     "dotenv": "^17.0.1",
-    "express": "^5.1.0",
+    "express": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "pg": "^8.16.3",

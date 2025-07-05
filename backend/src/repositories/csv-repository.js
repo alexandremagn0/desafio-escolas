@@ -1,4 +1,4 @@
-const AppDataSource = require('../config/database');
+const { getRepository } = require('../config/database');
 
 class CsvRepository {
   async insertBatch(data) {
@@ -35,6 +35,21 @@ class CsvRepository {
       await queryRunner.release();
     }
   }
+
+  async saveSchools(schools) {
+    const repo = getRepository('SchoolInstallation');
+    return await repo.save(schools);
+  }
+
+  async clearSchools() {
+    const repo = getRepository('SchoolInstallation');
+    await repo.clear();
+  }
+
+  async getSchoolsCount() {
+    const repo = getRepository('SchoolInstallation');
+    return await repo.count();
+  }
 }
 
-module.exports = new CsvRepository(); 
+module.exports = CsvRepository; 

@@ -105,11 +105,11 @@ O frontend estará disponível em `http://localhost:5173` (Vite padrão)
 - Middleware de proteção de rotas
 
 ### 📊 Gestão de Escolas
-- **Listar todas as escolas** - `GET /api/escolas`
-- **Buscar escola por ID** - `GET /api/escolas/:id`
-- **Criar nova escola** - `POST /api/escolas`
-- **Atualizar escola** - `PUT /api/escolas/:id`
-- **Deletar escola** - `DELETE /api/escolas/:id`
+- **Listar todas as escolas** - `GET /api/schools`
+- **Buscar escola por ID** - `GET /api/schools/:id`
+- **Criar nova escola** - `POST /api/schools`
+- **Atualizar escola** - `PUT /api/schools/:id`
+- **Deletar escola** - `DELETE /api/schools/:id`
 
 ### 📁 Upload de CSV
 - **Upload de arquivo CSV** - `POST /api/csv/upload`
@@ -142,11 +142,11 @@ Headers: Authorization: Bearer <token>
 
 ### Escolas (requer autenticação)
 ```
-GET    /api/escolas          # Listar todas
-GET    /api/escolas/:id      # Buscar por ID
-POST   /api/escolas          # Criar nova
-PUT    /api/escolas/:id      # Atualizar
-DELETE /api/escolas/:id      # Deletar
+GET    /api/schools          # Listar todas
+GET    /api/schools/:id      # Buscar por ID
+POST   /api/schools          # Criar nova
+PUT    /api/schools/:id      # Atualizar
+DELETE /api/schools/:id      # Deletar
 ```
 
 ### Upload CSV (requer autenticação)

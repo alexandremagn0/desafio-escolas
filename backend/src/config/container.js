@@ -1,22 +1,35 @@
-const EscolaRepository = require('../repositories/EscolaRepository');
-const EscolaService = require('../services/EscolaService');
+const SchoolRepository = require('../repositories/school-repository');
+const SchoolService = require('../services/school-service');
+const AuthService = require('../services/auth-service');
+const CsvService = require('../services/csv-service');
 
 class Container {
   constructor() {
     this.dependencies = new Map();
-    this.setupDependencies();
+    this.initializeDependencies();
   }
 
-  setupDependencies() {
-    this.dependencies.set('EscolaRepository', new EscolaRepository());
-    
-    this.dependencies.set('EscolaService', new EscolaService(
-      this.dependencies.get('EscolaRepository')
-    ));
+  initializeDependencies() {
+    this.dependencies.set('SchoolRepository', new SchoolRepository());
+    this.dependencies.set('SchoolService', new SchoolService(this.dependencies.get('SchoolRepository')));
+    this.dependencies.set('AuthService', new AuthService());
+    this.dependencies.set('CsvService', new CsvService());
   }
 
-  get(key) {
-    return this.dependencies.get(key);
+  getSchoolRepository() {
+    return this.dependencies.get('SchoolRepository');
+  }
+
+  getSchoolService() {
+    return this.dependencies.get('SchoolService');
+  }
+
+  getAuthService() {
+    return this.dependencies.get('AuthService');
+  }
+
+  getCsvService() {
+    return this.dependencies.get('CsvService');
   }
 }
 

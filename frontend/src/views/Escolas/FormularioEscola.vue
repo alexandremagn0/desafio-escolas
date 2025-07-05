@@ -14,99 +14,99 @@
         <form @submit.prevent="submitForm" class="school-form">
           <div class="form-row">
             <div class="form-group">
-              <label for="nome_escola">Nome da Escola *</label>
+                             <label for="school_name">Nome da Escola *</label>
               <input 
-                id="nome_escola"
-                v-model="form.nome_escola" 
+                id="school_name"
+                v-model="form.school_name" 
                 type="text" 
-                placeholder="Digite o nome da escola"
+                                 placeholder="Digite o nome da escola"
                 required
                 class="form-input"
-                :class="{ 'error': errors.nome_escola }"
+                :class="{ 'error': errors.school_name }"
               />
-              <span v-if="errors.nome_escola" class="error-message">{{ errors.nome_escola }}</span>
+              <span v-if="errors.school_name" class="error-message">{{ errors.school_name }}</span>
             </div>
             
             <div class="form-group">
-              <label for="codigo_escola">Código da Escola *</label>
+                             <label for="school_code">Código da Escola *</label>
               <input 
-                id="codigo_escola"
-                v-model="form.codigo_escola" 
+                id="school_code"
+                v-model="form.school_code" 
                 type="text" 
-                placeholder="Digite o código da escola"
+                                 placeholder="Digite o código da escola"
                 required
                 class="form-input"
-                :class="{ 'error': errors.codigo_escola }"
+                :class="{ 'error': errors.school_code }"
               />
-              <span v-if="errors.codigo_escola" class="error-message">{{ errors.codigo_escola }}</span>
+              <span v-if="errors.school_code" class="error-message">{{ errors.school_code }}</span>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="municipio">Município *</label>
+                             <label for="municipality">Município *</label>
               <input 
-                id="municipio"
-                v-model="form.municipio" 
+                id="municipality"
+                v-model="form.municipality" 
                 type="text" 
-                placeholder="Digite o município"
+                                 placeholder="Digite o município"
                 required
                 class="form-input"
-                :class="{ 'error': errors.municipio }"
+                :class="{ 'error': errors.municipality }"
               />
-              <span v-if="errors.municipio" class="error-message">{{ errors.municipio }}</span>
+              <span v-if="errors.municipality" class="error-message">{{ errors.municipality }}</span>
             </div>
             
             <div class="form-group">
-              <label for="diretoria_ensino">Diretoria de Ensino *</label>
+                             <label for="teaching_directorate">Diretoria de Ensino *</label>
               <input 
-                id="diretoria_ensino"
-                v-model="form.diretoria_ensino" 
+                id="teaching_directorate"
+                v-model="form.teaching_directorate" 
                 type="text" 
-                placeholder="Digite a diretoria de ensino"
+                                 placeholder="Digite a diretoria de ensino"
                 required
                 class="form-input"
-                :class="{ 'error': errors.diretoria_ensino }"
+                :class="{ 'error': errors.teaching_directorate }"
               />
-              <span v-if="errors.diretoria_ensino" class="error-message">{{ errors.diretoria_ensino }}</span>
+              <span v-if="errors.teaching_directorate" class="error-message">{{ errors.teaching_directorate }}</span>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="total_salas_aula">Total de Salas de Aula *</label>
+                             <label for="total_classrooms">Total de Salas de Aula *</label>
               <input 
-                id="total_salas_aula"
-                v-model="form.total_salas_aula" 
+                id="total_classrooms"
+                v-model="form.total_classrooms" 
                 type="number" 
                 min="0"
-                placeholder="Digite o número de salas"
+                                 placeholder="Digite o número de salas"
                 required
                 class="form-input"
-                :class="{ 'error': errors.total_salas_aula }"
+                :class="{ 'error': errors.total_classrooms }"
               />
-              <span v-if="errors.total_salas_aula" class="error-message">{{ errors.total_salas_aula }}</span>
+              <span v-if="errors.total_classrooms" class="error-message">{{ errors.total_classrooms }}</span>
             </div>
             
             <div class="form-group checkbox-group">
               <label class="checkbox-label">
                 <input 
-                  v-model="form.refeitorio" 
+                  v-model="form.cafeteria" 
                   type="checkbox" 
                   class="checkbox-input"
                 />
-                <span class="checkbox-text">Possui Refeitório</span>
+                                 <span class="checkbox-text">Possui Refeitório</span>
               </label>
             </div>
           </div>
 
           <div class="form-actions">
             <router-link to="/escolas" class="cancel-button">
-              Cancelar
+                             Cancelar
             </router-link>
             <button type="submit" class="submit-button" :disabled="loading">
-              <span v-if="loading">Salvando...</span>
-              <span v-else>Salvar Escola</span>
+                             <span v-if="loading">Salvando...</span>
+               <span v-else>Salvar Escola</span>
             </button>
           </div>
         </form>
@@ -125,12 +125,12 @@ const router = useRouter()
 
 // Form state
 const form = reactive({
-  nome_escola: '',
-  codigo_escola: '',
-  municipio: '',
-  diretoria_ensino: '',
-  total_salas_aula: '',
-  refeitorio: false
+  school_name: '',
+  school_code: '',
+  municipality: '',
+  teaching_directorate: '',
+  total_classrooms: '',
+  cafeteria: false
 })
 
 // UI state
@@ -141,24 +141,24 @@ const errors = reactive({})
 const validateForm = () => {
   for (const key in errors) delete errors[key]
   
-  if (!form.nome_escola.trim()) {
-    errors.nome_escola = 'Nome da escola é obrigatório'
+  if (!form.school_name.trim()) {
+    errors.school_name = 'Nome da escola é obrigatório'
   }
   
-  if (!form.codigo_escola.trim()) {
-    errors.codigo_escola = 'Código da escola é obrigatório'
+  if (!form.school_code.trim()) {
+    errors.school_code = 'Código da escola é obrigatório'
   }
   
-  if (!form.municipio.trim()) {
-    errors.municipio = 'Município é obrigatório'
+  if (!form.municipality.trim()) {
+    errors.municipality = 'Município é obrigatório'
   }
   
-  if (!form.diretoria_ensino.trim()) {
-    errors.diretoria_ensino = 'Diretoria de ensino é obrigatória'
+  if (!form.teaching_directorate.trim()) {
+    errors.teaching_directorate = 'Diretoria de ensino é obrigatória'
   }
   
-  if (!form.total_salas_aula || form.total_salas_aula < 0) {
-    errors.total_salas_aula = 'Total de salas deve ser um número válido'
+  if (!form.total_classrooms || form.total_classrooms < 0) {
+    errors.total_classrooms = 'Total de salas deve ser um número válido'
   }
   
   return Object.keys(errors).length === 0
@@ -173,10 +173,10 @@ const submitForm = async () => {
   try {
     const formData = {
       ...form,
-      total_salas_aula: parseInt(form.total_salas_aula)
+      total_classrooms: parseInt(form.total_classrooms)
     }
     
-    await api.post('/escolas', formData)
+    await api.post('/schools', formData)
     
     alert('Escola cadastrada com sucesso!')
     router.push('/escolas')
