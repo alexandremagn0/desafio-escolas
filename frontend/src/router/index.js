@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
-import ListagemEscolas from '../views/Escolas/ListagemEscolas.vue'
-import FormularioEscola from '../views/Escolas/FormularioEscola.vue'
+import SchoolList from '../views/Schools/SchoolList.vue'
+import SchoolForm from '../views/Schools/SchoolForm.vue'
 
 const routes = [
   { path: '/', redirect: '/dashboard' },
@@ -18,17 +18,17 @@ const routes = [
   },
   {
     path: '/escolas',
-    component: ListagemEscolas,
+    component: SchoolList,
     meta: { requiresAuth: true }
   },
   {
     path: '/escolas/nova',
-    component: FormularioEscola,
+    component: SchoolForm,
     meta: { requiresAuth: true }
   },
   {
     path: '/escolas/editar/:id',
-    component: FormularioEscola,
+    component: SchoolForm,
     meta: { requiresAuth: true }
   }
 ]

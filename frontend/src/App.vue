@@ -6,7 +6,6 @@ export default {
     titleTemplate: '%s - Sistema de Gestão Escolar'
   }
 }
-// Os componentes serão renderizados pelo Vue Router
 </script>
 
 <template>
