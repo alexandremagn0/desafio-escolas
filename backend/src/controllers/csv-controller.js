@@ -1,6 +1,8 @@
 const CsvService = require('../services/csv-service');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 class CsvController {
   constructor() {
@@ -10,10 +12,21 @@ class CsvController {
   upload = multer({
     storage: multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        // Usa o diretório temporário do sistema
+        const tempDir = os.tmpdir();
+        const uploadsDir = path.join(tempDir, 'csv-uploads');
+        
+        // Garante que a pasta existe
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        cb(null, uploadsDir);
       },
       filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        // Gera nome único para o arquivo
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `csv-${uniqueSuffix}${path.extname(file.originalname)}`);
       }
     }),
     fileFilter: (req, file, cb) => {
@@ -31,15 +44,33 @@ class CsvController {
         return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
       }
 
+      console.log('Processando arquivo:', req.file.originalname);
+      console.log('Caminho temporário:', req.file.path);
+
       const result = await this.csvService.processCsvFile(req.file.path);
       
       // Limpar arquivo temporário
-      const fs = require('fs');
-      fs.unlinkSync(req.file.path);
+      try {
+        fs.unlinkSync(req.file.path);
+        console.log('Arquivo temporário removido:', req.file.path);
+      } catch (cleanupError) {
+        console.warn('Erro ao remover arquivo temporário:', cleanupError.message);
+        // Não falha o upload se não conseguir limpar o arquivo
+      }
       
       res.json(result);
     } catch (error) {
       console.error('Erro ao processar CSV:', error);
+      
+      // Tenta limpar o arquivo mesmo em caso de erro
+      if (req.file && req.file.path) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (cleanupError) {
+          console.warn('Erro ao limpar arquivo após erro:', cleanupError.message);
+        }
+      }
+      
       res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }

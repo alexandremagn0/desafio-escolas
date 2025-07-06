@@ -5,4 +5,14 @@ dist/
 coverage/
 .DS_Store
 *.log
-postgres_data/ 
+postgres_data/
+
+# Arquivos temporários de upload
+uploads/
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Logs específicos
+local.log 
