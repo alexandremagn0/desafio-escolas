@@ -1,9 +1,8 @@
 const bcrypt = require('bcrypt');
-const AppDataSource = require('../config/database');
 
 async function createAdminUser() {
   try {
-    await AppDataSource.initialize();
+    const { AppDataSource } = require('../config/database');
     
     const userRepository = AppDataSource.getRepository('User');
     
@@ -32,19 +31,28 @@ async function createAdminUser() {
 
     await userRepository.save(adminUser);
     console.log('Usuário admin criado com sucesso!');
+    console.log('Email: admin@teste.com');
+    console.log('Senha: 123456');
     
   } catch (error) {
     console.error('Erro ao criar usuário admin:', error);
-  } finally {
-    if (AppDataSource.isInitialized) {
-      await AppDataSource.destroy();
-    }
+    throw error;
   }
 }
 
 // Executar se o arquivo for chamado diretamente
 if (require.main === module) {
-  createAdminUser();
+  const { initializeDatabase } = require('../config/database');
+  
+  initializeDatabase()
+    .then(() => {
+      console.log('Seed executado com sucesso!');
+      process.exit(0);
+    })
+    .catch(err => {
+      console.error('Erro ao executar seed:', err);
+      process.exit(1);
+    });
 }
 
 module.exports = createAdminUser; 

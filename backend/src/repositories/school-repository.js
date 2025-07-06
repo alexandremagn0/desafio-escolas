@@ -38,6 +38,21 @@ class SchoolRepository extends SchoolRepositoryInterface {
     }
     throw new Error('Escola não encontrada');
   }
+
+  async saveMany(schools) {
+    const repo = getRepository('SchoolInstallation');
+    return await repo.save(schools);
+  }
+
+  async clear() {
+    const repo = getRepository('SchoolInstallation');
+    await repo.clear();
+  }
+
+  async count() {
+    const repo = getRepository('SchoolInstallation');
+    return await repo.count();
+  }
 }
 
 module.exports = SchoolRepository; 

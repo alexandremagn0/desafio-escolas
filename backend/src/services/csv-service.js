@@ -1,11 +1,11 @@
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
-const CsvRepository = require('../repositories/csv-repository');
+const SchoolRepository = require('../repositories/school-repository');
 
 class CsvService {
   constructor() {
-    this.csvRepository = new CsvRepository();
+    this.schoolRepository = new SchoolRepository();
   }
 
   async processCsvFile(filePath) {
@@ -15,40 +15,13 @@ class CsvService {
       fs.createReadStream(filePath)
         .pipe(csv())
         .on('data', (row) => {
-          const school = {
-            school_code: row.codigo_escola,
-            school_name: row.nome_escola,
-            address: row.endereco,
-            city: row.cidade,
-            state: row.estado,
-            zip_code: row.cep,
-            phone: row.telefone,
-            email: row.email,
-            principal_name: row.nome_diretor,
-            principal_phone: row.telefone_diretor,
-            principal_email: row.email_diretor,
-            school_type: row.tipo_escola,
-            education_level: row.nivel_ensino,
-            enrollment: parseInt(row.matriculas) || 0,
-            teachers_count: parseInt(row.professores) || 0,
-            classrooms_count: parseInt(row.salas_aula) || 0,
-            computer_labs_count: parseInt(row.laboratorios_informatica) || 0,
-            science_labs_count: parseInt(row.laboratorios_ciencias) || 0,
-            library: row.biblioteca === 'Sim',
-            sports_court: row.quadra_esportes === 'Sim',
-            cafeteria: row.refeitorio === 'Sim',
-            auditorium: row.auditorio === 'Sim',
-            internet_access: row.acesso_internet === 'Sim',
-            computer_student_ratio: parseFloat(row.ratio_computador_aluno) || 0,
-            created_at: new Date(),
-            updated_at: new Date()
-          };
+          const school = this.transformCsvRowToSchool(row);
           schools.push(school);
         })
         .on('end', async () => {
           try {
-            await this.csvRepository.clearSchools();
-            const savedSchools = await this.csvRepository.saveSchools(schools);
+            await this.schoolRepository.clear();
+            const savedSchools = await this.schoolRepository.saveMany(schools);
             resolve({
               message: `Arquivo processado com sucesso. ${savedSchools.length} escolas importadas.`,
               count: savedSchools.length
@@ -64,7 +37,36 @@ class CsvService {
   }
 
   async getSchoolsCount() {
-    return await this.csvRepository.getSchoolsCount();
+    return await this.schoolRepository.count();
+  }
+
+  transformCsvRowToSchool(row) {
+    return {
+      school_name: row.NOMESC,
+      teaching_directorate: row.DE,
+      municipality: row.MUN,
+      school_code: row.CODESC,
+      total_classrooms: parseInt(row.TOT_SALAS_AULA) || 0,
+      cafeteria: row.REFEITORIO === '1',
+      // created_at: new Date(),
+      // updated_at: new Date()
+    };
+  }
+
+  // Método para processar dados em lote (se necessário)
+  async processBatchData(data) {
+    const batchSize = 100;
+    let totalInserted = 0;
+    
+    for (let i = 0; i < data.length; i += batchSize) {
+      const batch = data.slice(i, i + batchSize);
+      const schools = batch.map(row => this.transformCsvRowToSchool(row));
+      
+      await this.schoolRepository.saveMany(schools);
+      totalInserted += schools.length;
+    }
+    
+    return totalInserted;
   }
 
   async validateFile(file) {

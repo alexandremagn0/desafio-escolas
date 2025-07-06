@@ -1,8 +1,10 @@
 const SchoolService = require('../services/school-service');
+const SchoolRepository = require('../repositories/school-repository');
 
 class SchoolsController {
   constructor() {
-    this.schoolService = new SchoolService();
+    const schoolRepository = new SchoolRepository();
+    this.schoolService = new SchoolService(schoolRepository);
   }
 
   async list(req, res) {

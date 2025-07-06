@@ -15,7 +15,8 @@ const AppDataSource = new DataSource({
   subscribers: [__dirname + '/../subscribers/*.js'],
   ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  } : false
+  } : false,
+  entitySkipConstructor: true
 });
 
 // Função para obter repositório de forma segura
@@ -26,4 +27,40 @@ const getRepository = (entityName) => {
   return AppDataSource.getRepository(entityName);
 };
 
-module.exports = { AppDataSource, getRepository }; 
+const runSeeds = async () => {
+  try {
+    console.log('Verificando se é necessário executar seeds...');
+    
+    const userRepository = AppDataSource.getRepository('User');
+    const userCount = await userRepository.count();
+    
+    if (userCount === 0) {
+      console.log('Executando seeds pela primeira vez...');
+      
+      const createAdminUser = require('../seeds/create-admin-user');
+      await createAdminUser();
+      
+      console.log('Seeds executados com sucesso!');
+    } else {
+      console.log('Seeds já foram executados anteriormente.');
+    }
+  } catch (error) {
+    console.error('Erro ao executar seeds:', error);
+  }
+};
+
+const initializeDatabase = async () => {
+  try {
+    await AppDataSource.initialize();
+    console.log('Banco de dados inicializado com sucesso!');
+    
+    await runSeeds();
+    
+    return AppDataSource;
+  } catch (error) {
+    console.error('Erro ao inicializar banco de dados:', error);
+    throw error;
+  }
+};
+
+module.exports = { AppDataSource, getRepository, initializeDatabase }; 
