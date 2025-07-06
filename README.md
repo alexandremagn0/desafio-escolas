@@ -35,9 +35,9 @@ Aplicação fullstack com upload de CSV e CRUD de dados escolares, desenvolvida 
 - **UI**: Componentes Vue nativos
 
 ## 📋 Pré-requisitos
-- Node.js (versão 14 ou superior)
+- Node.js (versão 18 ou superior)
 - PostgreSQL
-- Docker (opcional, para usar docker-compose)
+- Docker
 
 ## ️ Como Executar
 
@@ -47,7 +47,7 @@ git clone https://github.com/alexandremagn0/desafio-escolas.git
 cd desafio-escolas
 ```
 
-### Opção 1: Execução com Docker (Recomendada)
+### Execução com Docker
 ```bash
 # Backend com Docker
 cd backend
@@ -59,13 +59,7 @@ npm install
 npm run dev
 ```
 
-### Opção 2: Execução Manual
-
-#### Backend
-```bash
-cd backend
-npm install
-```
+O frontend estará disponível em `http://localhost:5173` (Vite padrão)
 
 #### Configure o arquivo `.env` do backend
 ```bash
@@ -79,22 +73,6 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 JWT_SECRET=sua_chave_secreta_aqui
 ```
-
-#### Execute o backend
-```bash
-npm run dev  # Para desenvolvimento (com nodemon)
-# ou
-npm start    # Para produção
-```
-
-#### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-O frontend estará disponível em `http://localhost:5173` (Vite padrão)
 
 ## 📌 Funcionalidades
 
@@ -221,32 +199,7 @@ frontend/
 └── vite.config.js       # Configuração do Vite
 ```
 
-## 🛠️ Scripts Disponíveis
-
-### Backend
-```bash
-npm run dev    # Executa em modo desenvolvimento
-npm start      # Executa em modo produção
-npm test       # Executa testes (a implementar)
-```
-
-### Frontend
-```bash
-npm run dev    # Executa em modo desenvolvimento
-npm run build  # Gera build de produção
-npm run preview # Visualiza build de produção
-```
-
 ## 🔧 Configurações
-
-### Variáveis de Ambiente (Backend)
-- `PORT`: Porta do servidor (padrão: 3001)
-- `DB_HOST`: Host do PostgreSQL
-- `DB_PORT`: Porta do PostgreSQL (padrão: 5432)
-- `DB_NAME`: Nome do banco de dados
-- `DB_USER`: Usuário do banco
-- `DB_PASSWORD`: Senha do banco
-- `JWT_SECRET`: Chave secreta para JWT
 
 ### Portas Padrão
 - **Backend**: `http://localhost:3001`
