@@ -91,20 +91,29 @@
           
           <BForm @submit.prevent="uploadCsv">
             <BFormGroup>
-              <BFormFile
-                v-model="selectedFile"
+              <label for="csv-file" class="form-label">Selecione um arquivo CSV</label>
+              <input
+                id="csv-file"
+                type="file"
                 accept=".csv"
-                placeholder="Escolher arquivo CSV..."
-                drop-placeholder="Arraste o arquivo aqui..."
-                :state="selectedFile ? true : null"
+                @change="handleFileChange"
+                class="form-control"
+                :class="{ 'is-valid': selectedFile, 'is-invalid': false }"
               />
+              <div v-if="selectedFile" class="form-text text-success">
+                <i class="bi bi-check-circle me-1"></i>
+                Arquivo selecionado: {{ selectedFile.name }}
+              </div>
+              <div class="form-text text-muted">
+                Tamanho máximo: 5MB | Formato: CSV
+              </div>
             </BFormGroup>
             
             <BButton 
               type="submit" 
               variant="primary" 
               :disabled="!selectedFile || uploading"
-              class="w-100"
+              class="w-100 mt-3"
             >
               <BSpinner v-if="uploading" small class="me-2"></BSpinner>
               {{ uploading ? 'Enviando...' : 'Enviar CSV' }}
@@ -142,11 +151,9 @@ import api from '../api/axios'
 
 const router = useRouter()
 
-// State
 const selectedFile = ref(null)
 const uploading = ref(false)
 
-// Stats
 const stats = ref({
   totalEscolas: 0,
   totalMunicipios: 0,
@@ -155,6 +162,44 @@ const stats = ref({
 })
 
 // Methods
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  const input = event.target
+  
+  if (file) {
+    console.log('Arquivo selecionado:', file.name, 'Tamanho:', file.size, 'bytes')
+    
+    if (file.type !== 'text/csv' && !file.name.toLowerCase().endsWith('.csv')) {
+      alert('Por favor, selecione um arquivo CSV válido.')
+      input.value = ''
+      selectedFile.value = null
+      input.classList.remove('is-valid')
+      input.classList.add('is-invalid')
+      return
+    }
+    
+    // Validar tamanho do arquivo (máximo 5MB)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      alert('O arquivo é muito grande. Tamanho máximo: 5MB')
+      input.value = ''
+      selectedFile.value = null
+      input.classList.remove('is-valid')
+      input.classList.add('is-invalid')
+      return
+    }
+    
+    selectedFile.value = file
+    input.classList.remove('is-invalid')
+    input.classList.add('is-valid')
+    
+    console.log('Arquivo válido selecionado:', file.name)
+  } else {
+    selectedFile.value = null
+    input.classList.remove('is-valid', 'is-invalid')
+  }
+}
+
 const loadStats = async () => {
   try {
     const response = await api.get('/schools')
@@ -178,23 +223,36 @@ const loadStats = async () => {
 }
 
 const uploadCsv = async () => {
-  if (!selectedFile.value) return
+  if (!selectedFile.value) {
+    alert('Por favor, selecione um arquivo CSV primeiro.')
+    return
+  }
 
   try {
     uploading.value = true
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
-    await api.post('/csv/upload', formData, {
+    console.log('Enviando arquivo:', selectedFile.value.name)
+
+    const response = await api.post('/csv/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
-      }
+      },
+      timeout: 60000
     })
 
-    // Recarregar estatísticas após upload
+    console.log('Upload realizado com sucesso:', response.data)
+
     await loadStats()
+    
     selectedFile.value = null
-    alert('CSV enviado com sucesso!')
+    const fileInput = document.getElementById('csv-file')
+    if (fileInput) {
+      fileInput.value = ''
+    }
+    
+    alert('CSV enviado com sucesso! As estatísticas foram atualizadas.')
   } catch (error) {
     console.error('Erro ao enviar CSV:', error)
     
@@ -203,16 +261,26 @@ const uploadCsv = async () => {
     if (error.code === 'ECONNABORTED') {
       errorMessage = 'Timeout: O upload demorou muito. Tente com um arquivo menor ou verifique sua conexão.'
     } else if (error.response) {
-      // Erro da API
-      if (error.response.status === 413) {
-        errorMessage = 'Arquivo muito grande. Tente com um arquivo menor.'
-      } else if (error.response.data && error.response.data.error) {
-        errorMessage = `Erro: ${error.response.data.error}`
-      } else {
-        errorMessage = `Erro do servidor (${error.response.status})`
+      const status = error.response.status
+      const data = error.response.data
+      
+      switch (status) {
+        case 400:
+          errorMessage = data.error || 'Arquivo inválido. Verifique o formato do CSV.'
+          break
+        case 413:
+          errorMessage = 'Arquivo muito grande. Tamanho máximo: 5MB'
+          break
+        case 422:
+          errorMessage = data.error || 'Dados inválidos no arquivo CSV.'
+          break
+        case 500:
+          errorMessage = 'Erro interno do servidor. Tente novamente mais tarde.'
+          break
+        default:
+          errorMessage = data.error || `Erro do servidor (${status})`
       }
     } else if (error.request) {
-      // Erro de rede
       errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
     
@@ -241,6 +309,25 @@ onMounted(() => {
 .card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos para o input file */
+input[type="file"] {
+  cursor: pointer;
+}
+
+input[type="file"]:hover {
+  background-color: #f8f9fa;
+}
+
+input[type="file"].is-valid {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+input[type="file"].is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
 
 /* @media (max-width: 768px) {

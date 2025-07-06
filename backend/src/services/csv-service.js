@@ -13,24 +13,44 @@ class CsvService {
     
     return new Promise((resolve, reject) => {
       fs.createReadStream(filePath)
-        .pipe(csv())
+      .pipe(csv({ separator: ';' }))
         .on('data', (row) => {
           const school = this.transformCsvRowToSchool(row);
           schools.push(school);
         })
         .on('end', async () => {
           try {
-            await this.schoolRepository.clear();
-            const savedSchools = await this.schoolRepository.saveMany(schools);
+            console.log(`Processando ${schools.length} escolas...`);
+            
+            let updatedCount = 0;
+            let insertedCount = 0;
+            
+            for (const school of schools) {
+              // Verificar se a escola já existe pelo código
+              const existingSchool = await this.schoolRepository.findBySchoolCode(school.school_code);
+              
+              if (existingSchool) {
+                await this.schoolRepository.update(existingSchool.id, school);
+                updatedCount++;
+              } else {
+                await this.schoolRepository.create(school);
+                insertedCount++;
+              }
+            }
+            
             resolve({
-              message: `Arquivo processado com sucesso. ${savedSchools.length} escolas importadas.`,
-              count: savedSchools.length
+              message: `Arquivo processado com sucesso. ${insertedCount} escolas inseridas, ${updatedCount} escolas atualizadas.`,
+              count: schools.length,
+              inserted: insertedCount,
+              updated: updatedCount
             });
           } catch (error) {
+            console.error('Erro ao processar escolas:', error);
             reject(error);
           }
         })
         .on('error', (error) => {
+          console.error('Erro ao ler CSV:', error);
           reject(error);
         });
     });
@@ -42,12 +62,12 @@ class CsvService {
 
   transformCsvRowToSchool(row) {
     return {
-      school_name: row.NOMESC,
-      teaching_directorate: row.DE,
-      municipality: row.MUN,
-      school_code: row.CODESC,
-      total_classrooms: parseInt(row.TOT_SALAS_AULA) || 0,
-      cafeteria: row.REFEITORIO === '1',
+      school_name: row['NOMESC'] || '---',
+      teaching_directorate: row['DE'] || '---',
+      municipality: row['MUN'] || '---',
+      school_code: row['CODESC'] || '---',
+      total_classrooms: parseInt(row['TOT_SALAS_AULA']) || 0,
+      cafeteria: row['REFEITORIO'] === '1',
       // created_at: new Date(),
       // updated_at: new Date()
     };
