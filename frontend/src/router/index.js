@@ -5,7 +5,13 @@ import SchoolList from '../views/Schools/SchoolList.vue'
 import SchoolForm from '../views/Schools/SchoolForm.vue'
 
 const routes = [
-  { path: '/', redirect: '/dashboard' },
+  { 
+    path: '/', 
+    redirect: (to) => {
+      const token = localStorage.getItem('token')
+      return token ? '/dashboard' : '/login'
+    }
+  },
   { 
     path: '/login', 
     component: Login,
@@ -38,7 +44,6 @@ const router = createRouter({
   routes
 })
 
-// Protege rotas
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   
