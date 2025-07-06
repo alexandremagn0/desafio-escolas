@@ -71,7 +71,22 @@ class CsvController {
         }
       }
       
-      res.status(500).json({ error: 'Erro interno do servidor' });
+      if (error.message && (
+        error.message.includes('formato incompatível') ||
+        error.message.includes('campos obrigatórios') ||
+        error.message.includes('Nenhum registro válido') ||
+        error.message.includes('formato correto')
+      )) {
+        return res.status(422).json({ 
+          error: error.message,
+          type: 'validation_error'
+        });
+      }
+      
+      res.status(500).json({ 
+        error: 'Erro interno do servidor',
+        type: 'internal_error'
+      });
     }
   }
 

@@ -2,6 +2,7 @@ const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
 const SchoolRepository = require('../repositories/school-repository');
+const { csvRowSchema } = require('../schemas/csv-schema');
 
 class CsvService {
   constructor() {
@@ -10,39 +11,52 @@ class CsvService {
 
   async processCsvFile(filePath) {
     const schools = [];
+    const errors = [];
+    let rowNumber = 0;
     
     return new Promise((resolve, reject) => {
       fs.createReadStream(filePath)
       .pipe(csv({ separator: ';' }))
         .on('data', (row) => {
-          const school = this.transformCsvRowToSchool(row);
-          schools.push(school);
+          rowNumber++;
+          try {
+            // Validar linha usando schema Zod
+            const validatedRow = csvRowSchema.parse(row);
+            const school = this.transformValidatedRowToSchool(validatedRow);
+            schools.push(school);
+          } catch (error) {
+            if (error.errors) {
+              const fieldErrors = error.errors.map(err => 
+                `${err.path.join('.')}: ${err.message}`
+              ).join(', ');
+              errors.push(`Linha ${rowNumber}: ${fieldErrors}`);
+            } else {
+              errors.push(`Linha ${rowNumber}: ${error.message}`);
+            }
+          }
         })
         .on('end', async () => {
           try {
+            if (errors.length > 0) {
+              const errorMessage = `Arquivo CSV com formato incompatível`;
+              reject(new Error(errorMessage));
+              return;
+            }
+
+            if (schools.length === 0) {
+              reject(new Error('Nenhum registro válido encontrado no arquivo CSV. Verifique se o arquivo contém os campos obrigatórios: NOMESC, DE, MUN, CODESC, TOT_SALAS_AULA, REFEITORIO'));
+              return;
+            }
+
             console.log(`Processando ${schools.length} escolas...`);
             
-            let updatedCount = 0;
-            let insertedCount = 0;
-            
-            for (const school of schools) {
-              // Verificar se a escola já existe pelo código
-              const existingSchool = await this.schoolRepository.findBySchoolCode(school.school_code);
-              
-              if (existingSchool) {
-                await this.schoolRepository.update(existingSchool.id, school);
-                updatedCount++;
-              } else {
-                await this.schoolRepository.create(school);
-                insertedCount++;
-              }
-            }
+            const result = await this.processEfficiently(schools);
             
             resolve({
-              message: `Arquivo processado com sucesso. ${insertedCount} escolas inseridas, ${updatedCount} escolas atualizadas.`,
+              message: `Arquivo processado com sucesso. ${result.inserted} escolas inseridas, ${result.updated} escolas atualizadas.`,
               count: schools.length,
-              inserted: insertedCount,
-              updated: updatedCount
+              inserted: result.inserted,
+              updated: result.updated
             });
           } catch (error) {
             console.error('Erro ao processar escolas:', error);
@@ -51,7 +65,7 @@ class CsvService {
         })
         .on('error', (error) => {
           console.error('Erro ao ler CSV:', error);
-          reject(error);
+          reject(new Error('Erro ao ler arquivo CSV. Verifique se o arquivo está no formato correto (separador: ;)'));
         });
     });
   }
@@ -60,33 +74,53 @@ class CsvService {
     return await this.schoolRepository.count();
   }
 
-  transformCsvRowToSchool(row) {
+  transformValidatedRowToSchool(validatedRow) {
     return {
-      school_name: row['NOMESC'] || '---',
-      teaching_directorate: row['DE'] || '---',
-      municipality: row['MUN'] || '---',
-      school_code: row['CODESC'] || '---',
-      total_classrooms: parseInt(row['TOT_SALAS_AULA']) || 0,
-      cafeteria: row['REFEITORIO'] === '1',
-      // created_at: new Date(),
-      // updated_at: new Date()
+      school_name: validatedRow.NOMESC,
+      teaching_directorate: validatedRow.DE,
+      municipality: validatedRow.MUN,
+      school_code: validatedRow.CODESC,
+      total_classrooms: validatedRow.TOT_SALAS_AULA,
+      cafeteria: validatedRow.REFEITORIO,
     };
   }
 
-  // Método para processar dados em lote (se necessário)
-  async processBatchData(data) {
-    const batchSize = 100;
-    let totalInserted = 0;
+  async processEfficiently(schools) {
+    const allExistingSchools = await this.schoolRepository.list();
+    const existingSchoolsMap = new Map();
     
-    for (let i = 0; i < data.length; i += batchSize) {
-      const batch = data.slice(i, i + batchSize);
-      const schools = batch.map(row => this.transformCsvRowToSchool(row));
-      
-      await this.schoolRepository.saveMany(schools);
-      totalInserted += schools.length;
+    allExistingSchools.forEach(school => {
+      existingSchoolsMap.set(school.school_code, school);
+    });
+    
+    const schoolsToInsert = [];
+    const schoolsToUpdate = [];
+    
+    for (const school of schools) {
+      const existing = existingSchoolsMap.get(school.school_code);
+      if (existing) {
+        schoolsToUpdate.push({ id: existing.id, ...school });
+      } else {
+        schoolsToInsert.push(school);
+      }
     }
     
-    return totalInserted;
+    console.log(`Inserindo ${schoolsToInsert.length} escolas, atualizando ${schoolsToUpdate.length} escolas`);
+    
+    let inserted = 0;
+    let updated = 0;
+    
+    if (schoolsToInsert.length > 0) {
+      await this.schoolRepository.saveMany(schoolsToInsert);
+      inserted = schoolsToInsert.length;
+    }
+    
+    if (schoolsToUpdate.length > 0) {
+      await this.schoolRepository.updateMany(schoolsToUpdate);
+      updated = schoolsToUpdate.length;
+    }
+    
+    return { inserted, updated };
   }
 
   async validateFile(file) {

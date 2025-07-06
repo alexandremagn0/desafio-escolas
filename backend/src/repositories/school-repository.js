@@ -29,6 +29,15 @@ class SchoolRepository extends SchoolRepositoryInterface {
     return await this.findById(id);
   }
 
+  async updateMany(schools) {
+    const repo = getRepository('SchoolInstallation');
+    const updates = schools.map(school => {
+      const { id, ...data } = school;
+      return repo.update(id, data);
+    });
+    await Promise.all(updates);
+  }
+
   async delete(id) {
     const repo = getRepository('SchoolInstallation');
     const school = await repo.findOne({ where: { id } });
